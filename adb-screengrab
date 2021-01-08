@@ -1,0 +1,7 @@
+f=screengrab_$(date +%Y%m%d_%H%M%S).png
+
+adb shell screencap -p /sdcard/screenshot.png 
+adb pull /sdcard/screenshot.png 
+mv screenshot.png $f
+
+echo $f

@@ -1,0 +1,12 @@
+#!/bin/bash
+f=screenrecording_$(date +%Y%m%d_%H%M%S).mp4
+trap ctrl_c INT
+function ctrl_c() {
+   echo got ^c
+}
+
+echo "^c to stop recording"
+adb shell screenrecord /sdcard/$f
+sleep 1
+echo "open $f"
+adb pull /sdcard/$f .

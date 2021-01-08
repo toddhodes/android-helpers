@@ -1,0 +1,13 @@
+#!/bin/bash
+
+#
+# doze mode
+#
+
+
+case "$1" in
+"") echo "Usage: $0 <idle|off>" ;;
+"idle") adb shell dumpsys deviceidle force-idle ;;
+"off") adb shell dumpsys deviceidle unforce ;;
+esac
+

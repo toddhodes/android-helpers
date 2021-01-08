@@ -1,0 +1,33 @@
+#!/bin/bash
+# Script to grant permissions on all connected device, primarily android M
+# Devices below android M will get Operation not allowed exception so we'll skip those
+
+permissions=(\
+   "android.permission.ACCESS_BACKGROUND_LOCATION" \
+   "android.permission.ACCESS_FINE_LOCATION" \
+   "android.permission.READ_CONTACTS" \
+   "android.permission.READ_PHONE_STATE" \
+   "android.permission.READ_EXTERNAL_STORAGE" \
+   "android.permission.WRITE_EXTERNAL_STORAGE" \
+)
+
+APP_ID=$1
+TARGET_SDK=22
+declare -i SDK_VERSION
+
+if [ -z ${APP_ID} ]; then
+   echo "usage: grant-permissions <appId>"
+   exit
+fi
+for serial in `adb devices | grep device | grep -v List | cut -f1`;
+do
+   SDK_VERSION=`adb -s ${serial} shell cat system/build.prop | grep ro.build.version.sdk | cut -d'=' -f2 | tr -d '\r'`
+
+   if [ ${SDK_VERSION} -gt ${TARGET_SDK} ]; then
+      for permission in ${permissions[*]}
+      do
+         echo "adb -s ${serial} shell pm grant ${APP_ID} ${permission}"
+         adb -s ${serial} shell pm grant ${APP_ID} ${permission}
+      done
+   fi
+done
